@@ -6,8 +6,47 @@ using Core;
 
 namespace Triangulation
 {
-    class BoundList: List<BPoint>
+    class BoundList : List<BPoint>
     {
+        // puts the point into the list of BadPoints if it is bad
+        public void marksPointBad(BPoint t)
+        {
+            for (int i = 0; i < this.Count(); i++)
+            {
+                BPoint it = this[i];
+                Triangle tr = new Triangle(it.point, it.left.point, it.right.point);
+                if (t.insideTriangle(tr))
+                    this[i].badPoints.Add(t);
+            }
+        }
+
+        // sets the list of BadPoints for the triangle
+        public void marksTriangleBad(BPoint it)
+        {
+            Triangle tr = new Triangle(it.point, it.left.point, it.right.point);
+            for (int i = 0; i < this.Count(); i++)
+            {
+                BPoint t = this[i];
+                if (t.insideTriangle(tr))
+                    it.badPoints.Add(t);
+            }
+        }
+
+        // deletes the point from the list of BadPoints
+        public void deleteBad(BPoint bp)
+        {
+            for (int i = 0; i < this.Count(); i++)
+            {
+                this[i].badPoints.Remove(bp);
+            }
+
+            // became neighbours
+            bp.left.badPoints.Clear();
+            bp.right.badPoints.Clear();
+            marksTriangleBad(bp.left);
+            marksTriangleBad(bp.right);
+        }
+
         // binary search
         public void Add(BPoint bp)
         {
@@ -30,7 +69,7 @@ namespace Triangulation
                 this.Insert(last, bp);
         }
 
-        // update the place of из according to the angle
+        // update the place of bp according to the angle
         public void Update(BPoint bp)
         {
             Remove(bp);
@@ -42,10 +81,9 @@ namespace Triangulation
         {
             bp.left.right = bp.right;
             bp.right.left = bp.left;
-            bp.left.badPoints.Remove(bp);
-            bp.right.badPoints.Remove(bp);
             Update(bp.left);
             Update(bp.right);
+            deleteBad(bp);
             Remove(bp);
         }
 
@@ -60,20 +98,17 @@ namespace Triangulation
             Triangulator.pointCount++;
             p.Index = Triangulator.pointCount;
             BPoint newBP = new BPoint(p);
-            
+
             bp.left.right = newBP;
             bp.right.left = newBP;
             newBP.left = bp.left;
             newBP.right = bp.right;
             Add(newBP);
-
-            // TO DO: check - do we need that
-            bp.left.badPoints.Remove(bp);
-            bp.right.badPoints.Remove(bp);
-            // end TO DO
+            marksPointBad(newBP);
 
             Update(bp.left);
             Update(bp.right);
+            deleteBad(bp);
             Remove(bp);
 
             return newBP;

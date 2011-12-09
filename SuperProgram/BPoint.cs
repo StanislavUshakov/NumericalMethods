@@ -61,7 +61,7 @@ namespace Triangulation
             if (k.Y >= i.Y)
                 lAngle = Math.Acos(cosI);
             else
-                lAngle = Math.PI * 2  - Math.Acos(cosI);
+                lAngle = Math.PI * 2 - Math.Acos(cosI);
 
             if (lAngle < rAngle)
                 lAngle += Math.PI * 2;
@@ -78,7 +78,7 @@ namespace Triangulation
             return angle;
         }
 
-        public bool equalPoints(Point p1, Point p2)
+        public static bool equalPoints(Point p1, Point p2)
         {
             return (p1.X == p2.X) && (p1.Y == p2.Y);
         }
@@ -92,7 +92,7 @@ namespace Triangulation
             Triangle trik = new Triangle(tr.I, tr.K, point);
             Triangle trkj = new Triangle(tr.K, tr.J, point);
 
-            bool res = (Math.Abs(tr.Square() - (trij.Square() + trik.Square() + trkj.Square()))  <  eps);
+            bool res = ((Math.Abs(tr.Square() - (trij.Square() + trik.Square() + trkj.Square()))) < eps);
             return res;
         }
     }

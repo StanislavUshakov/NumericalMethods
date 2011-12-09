@@ -48,42 +48,11 @@ namespace Triangulation
             }
 
             // foreach BPoint find and set list of BadPoints
-            for (int i = 0; i < pointCount; i++)
+            // we take a point and check for all triangles if it is inside
+            for (int t = 0; t < pointCount; t++)
             {
-                BPoint it = boundList[i];
-                Triangle tr = new Triangle(it.point, it.left.point, it.right.point);
-                for (int t = 0; t < pointCount; t++)
-                {
-                    if (boundList[t].insideTriangle(tr))
-                        boundList[i].badPoints.Add(boundList[t]);
-                }
+                boundList.marksPointBad(boundList[t]);
             }
-
-            // for 0
-            /*Triangle tr = new Triangle(boundList[0].point, boundList[1].point, boundList[pointCount - 1].point);
-            for (int i = 2; i < pointCount - 1; i++)
-            {
-                if (boundList[i].insideTriangle(tr))
-                    boundList[0].badPoints.Add(boundList[i]);
-            }
-            // for n-1
-            tr = new Triangle(boundList[pointCount - 1].point, boundList[pointCount - 2].point, boundList[0].point);
-            for (int i = 1; i < pointCount - 2; i++)
-            {
-                if (boundList[i].insideTriangle(tr))
-                    boundList[pointCount - 1].badPoints.Add(boundList[i]);
-            }
-            // for all the rest
-            for (int i = 1; i < pointCount - 1; i++)
-            {
-                tr = new Triangle(boundList[i].point, boundList[i - 1].point, boundList[i + 1].point);
-                for (int t = 0; t < pointCount; t++)
-                {
-                    if (((t < i - 1) || (t > i + 1)) && (boundList[t].insideTriangle(tr)))
-                        boundList[i].badPoints.Add(boundList[t]);
-                }
-            }
-            */
 
             // while there is more than 1 triangle
             while (boundList.Count() > 3)
@@ -102,13 +71,13 @@ namespace Triangulation
                     BPoint jt = boundList[i].right;
                     BPoint kt = boundList[i].left;
                     (pointList as List<Point>).Add(it.point);
-                    
+
                     Triangle newTr = new Triangle(it.point, jt.point, kt.point);
                     triangleList.Add(newTr);
                     boundList.Cut(it);
                 }
                 else
-                { 
+                {
                     // new point
                     BPoint it = boundList[i];
                     BPoint jt = boundList[i].right;
@@ -132,7 +101,7 @@ namespace Triangulation
             (pointList as List<Point>).Add(k0.point);
             Triangle newTr0 = new Triangle(i0.point, j0.point, k0.point);
             triangleList.Add(newTr0);
-                    
+
             return triangleList;
         }
     }

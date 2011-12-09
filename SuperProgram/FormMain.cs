@@ -80,7 +80,20 @@ namespace SuperProgram {
 			} else{
 				int step;
 				if (int.TryParse(textBox1.Text, out step)){
-					_singleContour.RecalculateWithStep(step);
+                    // Julia
+                    int count = _singleContour.Count();
+                    int min = (int)Triangulation.BPoint.dist(_singleContour[count - 1], _singleContour[0]);
+                    for (int i = 0; i < count - 1; i++)
+                    {
+                        int cur = (int)Triangulation.BPoint.dist(_singleContour[i], _singleContour[i + 1]);
+                        if (cur < min)
+                            min = cur;
+                    }
+                    if (min < step)
+                        step = min;
+                    // end Julia
+                    
+                    _singleContour.RecalculateWithStep(step);
 					tabCtrlContours.TabPages.Clear();
 					_tabControlHelper.CreatePageForContour(_singleContour);
 					Graphics gr = Graphics.FromImage(pbDrawField.Image);
