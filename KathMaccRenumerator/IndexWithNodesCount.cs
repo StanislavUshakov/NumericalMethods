@@ -1,4 +1,4 @@
-﻿//Created by Evgenia Martynova
+﻿//Created by Evgeniya Martynova
 //Corsunina Core: Class-helper for Kathill-Macc Alghorithm
 
 using System;
