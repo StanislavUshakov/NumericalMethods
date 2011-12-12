@@ -1,4 +1,4 @@
-﻿//Created by Evgenia Martynova
+﻿//Created by Evgeniya Martynova
 //Corsunina Core: Renumeration with Kathill-Macc Alghorithm
 
 using System;
@@ -104,7 +104,7 @@ namespace KathMaccRenumerator
           }
           */
 
-        //получаем сисок точек из треугольноков
+        //получаем список точек из треугольноков
         private static List<Point> GetPointsFromTrianglesList(List<Triangle> triangles)
         {
             List<Point> points = new List<Point>();
@@ -126,7 +126,7 @@ namespace KathMaccRenumerator
 
         }
 
-        //Для каждой точки состявляем звезду из индексов точек
+        //Для каждой точки составляем звезду из индексов точек
         private static List<List<int>> GetAllStars(List<Triangle> triangles, List<Point> orderedPoints)
         {
             List<List<int>> starsForPoints = new List<List<int>>();
@@ -263,6 +263,7 @@ namespace KathMaccRenumerator
             orderedIndexes.Add(currentIndex + 1);
             int reorderedCount = 1;
 
+            //Получаем список перенумерованных по Катхилла-Макку индексов
             while (reorderedCount != pointsCount)
             {
                 List<int> currentStar = starsForPoints[currentIndex];
@@ -276,8 +277,10 @@ namespace KathMaccRenumerator
 
             List<Point> reorderedPoints = new List<Point>();
 
+            //На основе индексов строим массив точек упорядоченных по Катхилла-Макку
             for (int i = pointsCount - 1; i >= 0; i--) reorderedPoints.Add(orderedPoints[orderedIndexes[i] - 1].Clone());
-
+           
+            //Наконец-то перенумеровываем точки в треугольниках
             for (int i = 0; i < orderedPoints.Count; i++)
             {
                 orderedPoints[reorderedPoints[i].Index - 1].Index = i + 1;
