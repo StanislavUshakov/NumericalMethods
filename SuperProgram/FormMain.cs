@@ -22,6 +22,18 @@ namespace SuperProgram {
         private List<Triangle> _triangleList;
         // end Julia
 
+        //Evgenij
+        private Contour _contourPoints;
+
+        private double[,] matrix_system;
+        private double[] vector_system;
+
+        private void initSystem(){
+            matrix_system = new double[_singleContour.Count, _singleContour.Count];
+            vector_system = new double[_singleContour.Count];
+        }
+        //end Evgenij
+
 		public FormMain() {
 			InitializeComponent();
 			SetUp();
@@ -108,6 +120,11 @@ namespace SuperProgram {
         // Julia
         private void btnTriangulate_Click(object sender, EventArgs e)
         {
+            //Evgenij
+            _contourPoints = new Contour();
+            _contourPoints.AddRange(_singleContour);
+            //end Evgenij
+
             Triangulator triangulator = new Triangulator();
             _triangleList = (triangulator.Triangulate(_singleContour)) as List<Triangle>;
             _geometryDrawer.DrawTriangles(Pens.Black, _triangleList.ToArray());
@@ -125,5 +142,14 @@ namespace SuperProgram {
             _geometryDrawer.DrawTriangles(Pens.Black, _triangleList.ToArray());
         }
         //end Evgeniya
+
+        //Evgenij
+        private void btnSolve_Click(object sender, EventArgs e)
+        {
+            initSystem();
+            SystemMaker.MakeSystem(_triangleList, _contourPoints, matrix_system, vector_system);
+        }
+        //end Evgenij
+        
 	}
 }

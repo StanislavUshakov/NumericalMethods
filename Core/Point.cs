@@ -13,5 +13,15 @@
 		public Point Clone(){
 			return new Point(X, Y){Index = Index, T = T};
 		}
+
+        //Evgenij
+        public override bool Equals(object obj) {
+            //Check for null and compare run-time types.
+            if (obj == null || GetType() != obj.GetType()) return false;
+            Point p = (Point)obj;
+            return (Index == p.Index) && (X == p.X) && (Y == p.Y);
+        }
+        //end Evgenij
+
 	}
 }

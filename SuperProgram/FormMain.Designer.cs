@@ -120,6 +120,7 @@
             this.btnSolve.TabIndex = 8;
             this.btnSolve.Text = "Решить задачу в области";
             this.btnSolve.UseVisualStyleBackColor = true;
+            this.btnSolve.Click += new System.EventHandler(this.btnSolve_Click);
             // 
             // btnClear
             // 
