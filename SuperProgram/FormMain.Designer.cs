@@ -146,7 +146,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1052, 627);
+            this.ClientSize = new System.Drawing.Size(1026, 576);
             this.Controls.Add(this.btnRenumerator);
             this.Controls.Add(this.btnClear);
             this.Controls.Add(this.btnSolve);

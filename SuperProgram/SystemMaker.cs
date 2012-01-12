@@ -15,7 +15,7 @@ namespace SuperProgram
 
             double[,] K = new double[3, 3];
             double[] F = new double[3];
-            int i, j;
+
             double denominator_K; //4 * square of triangle
             double koefficient_line_segment; //length of line segment, devided on something
 
@@ -125,25 +125,25 @@ namespace SuperProgram
 
                 //-------------------------------------add matrix K in global matrix K-------------------------------
 
-                matrix[triangle.I.Index][triangle.I.Index] += K[0, 0];  //K[i,i]
-                matrix[triangle.I.Index][triangle.J.Index] += K[0, 1];  //K[i,j]
-                matrix[triangle.I.Index][triangle.K.Index] += K[0, 2];  //K[i,k]
+                matrix[triangle.I.Index - 1, triangle.I.Index - 1] += K[0, 0];  //K[i,i]
+                matrix[triangle.I.Index - 1, triangle.J.Index - 1] += K[0, 1];  //K[i,j]
+                matrix[triangle.I.Index - 1, triangle.K.Index - 1] += K[0, 2];  //K[i,k]
 
-                matrix[triangle.J.Index][triangle.I.Index] += K[1, 0];  //K[j,i]
-                matrix[triangle.J.Index][triangle.J.Index] += K[1, 1];  //K[j,j]
-                matrix[triangle.J.Index][triangle.K.Index] += K[1, 2];  //K[j,k]
+                matrix[triangle.J.Index - 1, triangle.I.Index - 1] += K[1, 0];  //K[j,i]
+                matrix[triangle.J.Index - 1, triangle.J.Index - 1] += K[1, 1];  //K[j,j]
+                matrix[triangle.J.Index - 1, triangle.K.Index - 1] += K[1, 2];  //K[j,k]
 
-                matrix[triangle.K.Index][triangle.I.Index] += K[2, 0];  //K[k,i]
-                matrix[triangle.K.Index][triangle.J.Index] += K[2, 1];  //K[k,j]
-                matrix[triangle.K.Index][triangle.K.Index] += K[2, 2];  //K[k,k]
+                matrix[triangle.K.Index - 1, triangle.I.Index - 1] += K[2, 0];  //K[k,i]
+                matrix[triangle.K.Index - 1, triangle.J.Index - 1] += K[2, 1];  //K[k,j]
+                matrix[triangle.K.Index - 1, triangle.K.Index - 1] += K[2, 2];  //K[k,k]
 
                 //---------------------------------------------------------------------------------------------------
   
                 //----------------------------add vektor F in global vektor F----------------------------------------
 
-                vector[triangle.I.Index] += F[0];  //F[i]
-                vector[triangle.J.Index] += F[1];  //F[j]
-                vector[triangle.K.Index] += F[2];  //F[k]
+                vector[triangle.I.Index - 1] += F[0];  //F[i]
+                vector[triangle.J.Index - 1] += F[1];  //F[j]
+                vector[triangle.K.Index - 1] += F[2];  //F[k]
 
                 //---------------------------------------------------------------------------------------------------
 

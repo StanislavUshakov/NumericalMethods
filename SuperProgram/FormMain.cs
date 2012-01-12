@@ -121,7 +121,7 @@ namespace SuperProgram {
         private void btnTriangulate_Click(object sender, EventArgs e)
         {
             //Evgenij
-            _contourPoints = new Contour();
+            _contourPoints = new Contour(_singleContour.Index);
             _contourPoints.AddRange(_singleContour);
             //end Evgenij
 
@@ -147,7 +147,7 @@ namespace SuperProgram {
         private void btnSolve_Click(object sender, EventArgs e)
         {
             initSystem();
-            SystemMaker.MakeSystem(_triangleList, _contourPoints, matrix_system, vector_system);
+            SystemMaker.MakeSystem(ref _triangleList, ref _contourPoints, ref matrix_system, ref vector_system);
         }
         //end Evgenij
         
