@@ -28,6 +28,8 @@ namespace SuperProgram {
         private double[,] matrix_system;
         private double[] vector_system;
 
+        private double[] solution;
+
         private void initSystem(){
             matrix_system = new double[_singleContour.Count, _singleContour.Count];
             vector_system = new double[_singleContour.Count];
@@ -148,6 +150,7 @@ namespace SuperProgram {
         {
             initSystem();
             SystemMaker.MakeSystem(ref _triangleList, ref _contourPoints, ref matrix_system, ref vector_system);
+            solution = Cholesky.CholeskySolver.Solve(matrix_system, vector_system);
         }
         //end Evgenij
         
