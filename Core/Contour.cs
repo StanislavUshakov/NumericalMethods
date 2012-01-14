@@ -138,7 +138,7 @@ namespace Core
                 HelperUtils.Swap(ref Ay, ref By);
             }
 
-            return Math.Atan2(Bx - Ax, By - Ay);
+            return Math.Atan2(By - Ay, Bx - Ax);
         }
 
         private bool IsCurrentOrientationClockwise()
@@ -166,8 +166,7 @@ namespace Core
             if (!_orientedCounterclockwise)
             {
                 int minY = this.Min(x => x.Y);
-                int contourBottomPointIndex = FindIndex(x => x.Y == minY);
-                int rightNeighbour = contourBottomPointIndex < Count - 1 ? contourBottomPointIndex + 1 : 0;
+                int contourBottomPointIndex = FindIndex(x => x.Y == minY);                
                 if (IsCurrentOrientationClockwise())
                 {
                     renumerate(contourBottomPointIndex, 1, RenumerationDirection.Right);
@@ -193,8 +192,7 @@ namespace Core
             if (!_orientedClockwise)
             {
                 int maxY = this.Min(x => x.Y);
-                int contourBottomPointIndex = FindIndex(x => x.Y == maxY);
-                int leftNeighbour = contourBottomPointIndex > 0 ? contourBottomPointIndex - 1 : Count - 1;
+                int contourBottomPointIndex = FindIndex(x => x.Y == maxY);                
                 if (!IsCurrentOrientationClockwise())
                 {
                     renumerate(contourBottomPointIndex, 1, RenumerationDirection.Left);
