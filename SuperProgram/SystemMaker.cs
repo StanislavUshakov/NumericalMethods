@@ -8,7 +8,7 @@ namespace SuperProgram
 {
     static class SystemMaker
     {
-        //sets in matrix and vector the system, that must be solved by Halectiy
+        //sets in matrix and vector the system, that must be solved by Cholesky
         //matrix and vector must be created and initialized 0 before this executing this method.
         public static void MakeSystem(ref List<Triangle> triangles, ref Contour contour, ref double[,] matrix, ref double[] vector)
         {
@@ -77,10 +77,10 @@ namespace SuperProgram
                         K[0, 1] += koefficient_line_segment;  // (length of IJ) / 6
                         K[1, 0] += koefficient_line_segment;  // (length of IJ) / 6
 
-                        koefficient_line_segment = triangle.IJ.Length / 2.0;
+                        koefficient_line_segment = (triangle.I.T + triangle.J.T) * triangle.IJ.Length / 4.0;
 
-                        F[0] += koefficient_line_segment;  // (length of IJ) / 2
-                        F[1] += koefficient_line_segment;  // (length of IJ) / 2
+                        F[0] += koefficient_line_segment;  // (average temperature on IJ) * (length of IJ) / 2
+                        F[1] += koefficient_line_segment;  // (average temperature on IJ) * (length of IJ) / 2
                     }
 
                     if (contour.Contains(triangle.K)) //if KI
@@ -95,10 +95,10 @@ namespace SuperProgram
                         K[0, 2] += koefficient_line_segment;  //(length of KI) / 6
                         K[2, 0] += koefficient_line_segment;  //(length of KI) / 6
 
-                        koefficient_line_segment = triangle.KI.Length / 2.0;
+                        koefficient_line_segment = (triangle.I.T + triangle.K.T) * triangle.KI.Length / 4.0;
 
-                        F[0] += koefficient_line_segment;  //(length of KI) / 2
-                        F[2] += koefficient_line_segment;  //(length of KI) / 2
+                        F[0] += koefficient_line_segment;  // (average temperature on KI) * (length of KI) / 2
+                        F[2] += koefficient_line_segment;  // (average temperature on KI) * (length of KI) / 2
                     }
                 }
 
@@ -114,10 +114,10 @@ namespace SuperProgram
                     K[1, 2] += koefficient_line_segment;  //(length of JK) / 6
                     K[2, 1] += koefficient_line_segment;  //(length of JK) / 6
 
-                    koefficient_line_segment = triangle.JK.Length / 2.0;
+                    koefficient_line_segment = (triangle.J.T + triangle.K.T) * triangle.JK.Length / 4.0;
 
-                    F[1] += koefficient_line_segment;  //(length of JK) / 2
-                    F[2] += koefficient_line_segment;  //(length of JK) / 2
+                    F[1] += koefficient_line_segment;  // (average temperature on JK) * (length of JK) / 2
+                    F[2] += koefficient_line_segment;  // (average temperature on JK) * (length of JK) / 2
                 }
 
                 //--------------------------------------------------------------------------------------------------
