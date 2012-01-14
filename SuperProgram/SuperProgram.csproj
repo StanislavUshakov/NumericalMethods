@@ -61,6 +61,7 @@
   <ItemGroup>
     <Compile Include="BoundList.cs" />
     <Compile Include="BPoint.cs" />
+    <Compile Include="ButtonController.cs" />
     <Compile Include="CholeskySolver.cs" />
     <Compile Include="CodeBehind\ContourDataGridView.cs">
       <SubType>Component</SubType>
