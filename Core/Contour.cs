@@ -193,7 +193,7 @@ namespace Core
             {
                 int maxY = this.Min(x => x.Y);
                 int contourBottomPointIndex = FindIndex(x => x.Y == maxY);                
-                if (!IsCurrentOrientationClockwise())
+                if (IsCurrentOrientationClockwise())
                 {
                     renumerate(contourBottomPointIndex, 1, RenumerationDirection.Left);
                 }
