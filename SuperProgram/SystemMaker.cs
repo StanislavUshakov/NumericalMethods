@@ -18,6 +18,12 @@ namespace SuperProgram
 
             double denominator_K; //4 * square of triangle
             double koefficient_line_segment; //length of line segment, devided on something
+            int points_index_difference; //the difference of 2 points indexes: used to check are 2 point neighbors on the contour
+            
+            int last_point_index_in_contour = 0;
+            foreach (Point point in contour)
+                if (point.Index > last_point_index_in_contour)
+                    last_point_index_in_contour = point.Index;
 
             foreach (Triangle triangle in triangles)
             {
@@ -67,57 +73,123 @@ namespace SuperProgram
                 {
                     if (contour.Contains(triangle.J)) //if IJ
                     {
-                        koefficient_line_segment = triangle.IJ.Length / 3.0;
+                        points_index_difference = triangle.I.Index - triangle.J.Index;
+                        if ((points_index_difference == 1) || (points_index_difference == -1))
+                        {// if I and J are neighbors
+                            koefficient_line_segment = triangle.IJ.Length / 3.0;
 
-                        K[0, 0] += koefficient_line_segment;  // (length of IJ) / 3
-                        K[1, 1] += koefficient_line_segment;  // (length of IJ) / 3
+                            K[0, 0] += koefficient_line_segment;  // (length of IJ) / 3
+                            K[1, 1] += koefficient_line_segment;  // (length of IJ) / 3
 
-                        koefficient_line_segment = triangle.IJ.Length / 6.0;
+                            koefficient_line_segment = triangle.IJ.Length / 6.0;
 
-                        K[0, 1] += koefficient_line_segment;  // (length of IJ) / 6
-                        K[1, 0] += koefficient_line_segment;  // (length of IJ) / 6
+                            K[0, 1] += koefficient_line_segment;  // (length of IJ) / 6
+                            K[1, 0] += koefficient_line_segment;  // (length of IJ) / 6
 
-                        koefficient_line_segment = (triangle.I.T + triangle.J.T) * triangle.IJ.Length / 4.0;
+                            koefficient_line_segment = (triangle.I.T + triangle.J.T) * triangle.IJ.Length / 4.0;
 
-                        F[0] += koefficient_line_segment;  // (average temperature on IJ) * (length of IJ) / 2
-                        F[1] += koefficient_line_segment;  // (average temperature on IJ) * (length of IJ) / 2
+                            F[0] += koefficient_line_segment;  // (average temperature on IJ) * (length of IJ) / 2
+                            F[1] += koefficient_line_segment;  // (average temperature on IJ) * (length of IJ) / 2
+                        }
+                        else if ( ((triangle.I.Index == 1) || (triangle.I.Index == last_point_index_in_contour)) &&
+                                  ((triangle.J.Index == 1) || (triangle.J.Index == last_point_index_in_contour))  )
+                        {//if I and J are the first and the last points in the contour (they are neighbors)
+                            koefficient_line_segment = triangle.IJ.Length / 3.0;
+
+                            K[0, 0] += koefficient_line_segment;  // (length of IJ) / 3
+                            K[1, 1] += koefficient_line_segment;  // (length of IJ) / 3
+
+                            koefficient_line_segment = triangle.IJ.Length / 6.0;
+
+                            K[0, 1] += koefficient_line_segment;  // (length of IJ) / 6
+                            K[1, 0] += koefficient_line_segment;  // (length of IJ) / 6
+
+                            koefficient_line_segment = (triangle.I.T + triangle.J.T) * triangle.IJ.Length / 4.0;
+
+                            F[0] += koefficient_line_segment;  // (average temperature on IJ) * (length of IJ) / 2
+                            F[1] += koefficient_line_segment;  // (average temperature on IJ) * (length of IJ) / 2
+                        }
                     }
 
                     if (contour.Contains(triangle.K)) //if KI
                     {
-                        koefficient_line_segment = triangle.KI.Length / 3.0;
+                        points_index_difference = triangle.I.Index - triangle.K.Index;
+                        if ((points_index_difference == 1) || (points_index_difference == -1))
+                        {// if I and K are neighbors
+                            koefficient_line_segment = triangle.KI.Length / 3.0;
 
-                        K[0, 0] += koefficient_line_segment;  //(length of KI) / 3
-                        K[2, 2] += koefficient_line_segment;  //(length of KI) / 3
+                            K[0, 0] += koefficient_line_segment;  //(length of KI) / 3
+                            K[2, 2] += koefficient_line_segment;  //(length of KI) / 3
 
-                        koefficient_line_segment = triangle.KI.Length / 6.0;
+                            koefficient_line_segment = triangle.KI.Length / 6.0;
 
-                        K[0, 2] += koefficient_line_segment;  //(length of KI) / 6
-                        K[2, 0] += koefficient_line_segment;  //(length of KI) / 6
+                            K[0, 2] += koefficient_line_segment;  //(length of KI) / 6
+                            K[2, 0] += koefficient_line_segment;  //(length of KI) / 6
 
-                        koefficient_line_segment = (triangle.I.T + triangle.K.T) * triangle.KI.Length / 4.0;
+                            koefficient_line_segment = (triangle.I.T + triangle.K.T) * triangle.KI.Length / 4.0;
 
-                        F[0] += koefficient_line_segment;  // (average temperature on KI) * (length of KI) / 2
-                        F[2] += koefficient_line_segment;  // (average temperature on KI) * (length of KI) / 2
+                            F[0] += koefficient_line_segment;  // (average temperature on KI) * (length of KI) / 2
+                            F[2] += koefficient_line_segment;  // (average temperature on KI) * (length of KI) / 2
+                        }
+                        else if ( ((triangle.I.Index == 1) || (triangle.I.Index == last_point_index_in_contour)) &&
+                                  ((triangle.K.Index == 1) || (triangle.K.Index == last_point_index_in_contour))  )
+                        {//if I and K are the first and the last points in the contour (they are neighbors)
+                            koefficient_line_segment = triangle.KI.Length / 3.0;
+
+                            K[0, 0] += koefficient_line_segment;  //(length of KI) / 3
+                            K[2, 2] += koefficient_line_segment;  //(length of KI) / 3
+
+                            koefficient_line_segment = triangle.KI.Length / 6.0;
+
+                            K[0, 2] += koefficient_line_segment;  //(length of KI) / 6
+                            K[2, 0] += koefficient_line_segment;  //(length of KI) / 6
+
+                            koefficient_line_segment = (triangle.I.T + triangle.K.T) * triangle.KI.Length / 4.0;
+
+                            F[0] += koefficient_line_segment;  // (average temperature on KI) * (length of KI) / 2
+                            F[2] += koefficient_line_segment;  // (average temperature on KI) * (length of KI) / 2                        }
+                        }
                     }
                 }
 
                 if (contour.Contains(triangle.J) && contour.Contains(triangle.K))  //if JK
                 {
-                    koefficient_line_segment = triangle.JK.Length / 3.0;
+                    points_index_difference = triangle.K.Index - triangle.J.Index;
+                    if ((points_index_difference == 1) || (points_index_difference == -1))
+                    {// if K and J are neighbors
+                        koefficient_line_segment = triangle.JK.Length / 3.0;
 
-                    K[1, 1] += koefficient_line_segment;  //(length of JK) / 3
-                    K[2, 2] += koefficient_line_segment;  //(length of JK) / 3
+                        K[1, 1] += koefficient_line_segment;  //(length of JK) / 3
+                        K[2, 2] += koefficient_line_segment;  //(length of JK) / 3
 
-                    koefficient_line_segment = triangle.JK.Length / 6.0;
+                        koefficient_line_segment = triangle.JK.Length / 6.0;
 
-                    K[1, 2] += koefficient_line_segment;  //(length of JK) / 6
-                    K[2, 1] += koefficient_line_segment;  //(length of JK) / 6
+                        K[1, 2] += koefficient_line_segment;  //(length of JK) / 6
+                        K[2, 1] += koefficient_line_segment;  //(length of JK) / 6
 
-                    koefficient_line_segment = (triangle.J.T + triangle.K.T) * triangle.JK.Length / 4.0;
+                        koefficient_line_segment = (triangle.J.T + triangle.K.T) * triangle.JK.Length / 4.0;
 
-                    F[1] += koefficient_line_segment;  // (average temperature on JK) * (length of JK) / 2
-                    F[2] += koefficient_line_segment;  // (average temperature on JK) * (length of JK) / 2
+                        F[1] += koefficient_line_segment;  // (average temperature on JK) * (length of JK) / 2
+                        F[2] += koefficient_line_segment;  // (average temperature on JK) * (length of JK) / 2
+                    }
+                    else if ( ((triangle.J.Index == 1) || (triangle.J.Index == last_point_index_in_contour)) &&
+                              ((triangle.K.Index == 1) || (triangle.K.Index == last_point_index_in_contour))  )
+                    {//if J and K are the first and the last points in the contour (they are neighbors)
+                        koefficient_line_segment = triangle.JK.Length / 3.0;
+
+                        K[1, 1] += koefficient_line_segment;  //(length of JK) / 3
+                        K[2, 2] += koefficient_line_segment;  //(length of JK) / 3
+
+                        koefficient_line_segment = triangle.JK.Length / 6.0;
+
+                        K[1, 2] += koefficient_line_segment;  //(length of JK) / 6
+                        K[2, 1] += koefficient_line_segment;  //(length of JK) / 6
+
+                        koefficient_line_segment = (triangle.J.T + triangle.K.T) * triangle.JK.Length / 4.0;
+
+                        F[1] += koefficient_line_segment;  // (average temperature on JK) * (length of JK) / 2
+                        F[2] += koefficient_line_segment;  // (average temperature on JK) * (length of JK) / 2
+                    }
                 }
 
                 //--------------------------------------------------------------------------------------------------
