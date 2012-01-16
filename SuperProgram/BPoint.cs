@@ -17,7 +17,9 @@ namespace Triangulation
         public BPoint left { get; set; }
         public BPoint right { get; set; }
         public List<BPoint> badPoints; // list of BPoint's indexes inside the angle
+        public bool eBad; // can't be excavated
         private static double eps = 0.001;
+        private static double epsLay = 7;
 
         public BPoint(Point vpoint)
         {
@@ -30,6 +32,7 @@ namespace Triangulation
             lAngle = 0;
             rAngle = 0;
             badPoints = new List<BPoint>();
+            eBad = false;
         }
 
         public static double dist(Point p1, Point p2)
@@ -85,7 +88,11 @@ namespace Triangulation
 
         public bool insideTriangle(Triangle tr)
         {
-            if (equalPoints(point, tr.I) || equalPoints(point, tr.J) || equalPoints(point, tr.K))
+            // lays on bound?
+            if (((dist(point, tr.I) + dist(point, tr.J) - dist(tr.I, tr.J)) < epsLay) ||
+                 ((dist(point, tr.I) + dist(point, tr.K) - dist(tr.I, tr.K)) < epsLay) ||
+                 ((dist(point, tr.K) + dist(point, tr.J) - dist(tr.K, tr.J)) < epsLay))
+                //if (equalPoints(point, tr.I) || equalPoints(point, tr.J) || equalPoints(point, tr.K))
                 return false;
 
             Triangle trij = new Triangle(tr.I, tr.J, point);

@@ -8,27 +8,55 @@ namespace Triangulation
 {
     class BoundList : List<BPoint>
     {
+        // marks bad (it - triangle, t - Point)
+        void markBad(BPoint it, BPoint t)
+        {
+            Triangle tr = new Triangle(it.point, it.left.point, it.right.point);
+            double ang = it.angle;
+            if ((ang < Math.PI * 5 / 12) ||
+                ((ang < Math.PI / 2) && (it.jAngle > Math.PI / 6) && (it.kAngle > Math.PI / 6)))
+            {
+                if (t.insideTriangle(tr))
+                    it.badPoints.Add(t);
+            }
+            else
+            {
+                // check excavation for the intersection
+                Point ep = ExcavationPoint(it);
+                LineSegment excSegment = new LineSegment(it.point, ep);
+                BPoint temp = it.right;
+                bool flag = false;
+                while ((!flag) && (temp != it.left))
+                {
+                    LineSegment tSegment = new LineSegment(temp.point, temp.right.point);
+                    if (!((BPoint.equalPoints(excSegment.Start, tSegment.Start)) ||
+                          (BPoint.equalPoints(excSegment.Start, tSegment.End)) ||
+                          (BPoint.equalPoints(excSegment.End, tSegment.Start)) ||
+                          (BPoint.equalPoints(excSegment.End, tSegment.End))))
+                        flag = excSegment.Intersects(tSegment, IntersectionCheckOptions.WithoutEdgePoints);
+                    temp = temp.right;
+                }
+                it.eBad = flag;
+            }
+        }
+
         // puts the point into the list of BadPoints if it is bad
         public void marksPointBad(BPoint t)
         {
             for (int i = 0; i < this.Count(); i++)
             {
                 BPoint it = this[i];
-                Triangle tr = new Triangle(it.point, it.left.point, it.right.point);
-                if (t.insideTriangle(tr))
-                    this[i].badPoints.Add(t);
+                markBad(it, t);
             }
         }
 
         // sets the list of BadPoints for the triangle
         public void marksTriangleBad(BPoint it)
         {
-            Triangle tr = new Triangle(it.point, it.left.point, it.right.point);
             for (int i = 0; i < this.Count(); i++)
             {
                 BPoint t = this[i];
-                if (t.insideTriangle(tr))
-                    it.badPoints.Add(t);
+                markBad(it, t);
             }
         }
 
@@ -39,12 +67,6 @@ namespace Triangulation
             {
                 this[i].badPoints.Remove(bp);
             }
-
-            // became neighbours
-            bp.left.badPoints.Clear();
-            bp.right.badPoints.Clear();
-            marksTriangleBad(bp.left);
-            marksTriangleBad(bp.right);
         }
 
         // binary search
@@ -76,6 +98,15 @@ namespace Triangulation
             Add(bp);
         }
 
+        // update the place of bp according to the angle
+        public void UpdateBad(BPoint bp)
+        {
+            bp.eBad = false;
+            bp.badPoints.Clear();
+            marksTriangleBad(bp);
+            marksPointBad(bp);
+        }
+
         // cut point from the list
         public void Cut(BPoint bp)
         {
@@ -83,18 +114,27 @@ namespace Triangulation
             bp.right.left = bp.left;
             Update(bp.left);
             Update(bp.right);
+            UpdateBad(bp.left);
+            UpdateBad(bp.right);
             deleteBad(bp);
             Remove(bp);
         }
 
-        // add new point
-        public BPoint Excavation(BPoint bp)
+        // finds the excavationPoint
+        Point ExcavationPoint(BPoint bp)
         {
             double ang = (bp.rAngle + bp.lAngle) / 2;
             double r = (BPoint.dist(bp.point, bp.right.point) + BPoint.dist(bp.point, bp.left.point)) / 2;
             int x = bp.point.X + (int)(r * Math.Cos(ang));
             int y = bp.point.Y + (int)(r * Math.Sin(ang));
             Point p = new Point(x, y);
+            return p;
+        }
+
+        // add new point
+        public BPoint Excavation(BPoint bp)
+        {
+            Point p = ExcavationPoint(bp);
             Triangulator.pointCount++;
             p.Index = Triangulator.pointCount;
             BPoint newBP = new BPoint(p);
@@ -103,13 +143,16 @@ namespace Triangulation
             bp.right.left = newBP;
             newBP.left = bp.left;
             newBP.right = bp.right;
-            Add(newBP);
-            marksPointBad(newBP);
-
-            Update(bp.left);
-            Update(bp.right);
             deleteBad(bp);
             Remove(bp);
+
+            Add(newBP);
+            Update(newBP.left);
+            Update(newBP.right);
+
+            UpdateBad(newBP);
+            UpdateBad(newBP.left);
+            UpdateBad(newBP.right);
 
             return newBP;
         }

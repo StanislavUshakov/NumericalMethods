@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Core;
+using System.Windows.Forms;
 
 namespace Triangulation
 {
@@ -51,15 +52,21 @@ namespace Triangulation
             // we take a point and check for all triangles if it is inside
             for (int t = 0; t < pointCount; t++)
             {
-                boundList.marksPointBad(boundList[t]);
+                boundList.marksTriangleBad(boundList[t]);
             }
 
             // while there is more than 1 triangle
             while (boundList.Count() > 3)
             {
                 int i = 0;
-                while (boundList[i].badPoints.Count() > 0)
+                while ((i < boundList.Count) && ((boundList[i].eBad) || (boundList[i].badPoints.Count() > 0)))
                     i++;
+
+                if (i == boundList.Count)
+                {
+                    MessageBox.Show("Ошибка триангуляции. Невозможно выбрать точку для выемки.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return (triangleList);
+                }
 
                 // work with the i node
                 double ang = boundList[i].angle;
