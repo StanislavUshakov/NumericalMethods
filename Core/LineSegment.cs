@@ -13,7 +13,7 @@ namespace Core {
 		}
 
 		public bool Intersects(LineSegment other, IntersectionCheckOptions option){
-			return projectionIntersectionCheck(other, option) && signedTriangleSquareCheck(other, option);
+            return projectionIntersectionCheck(other, option) && signedTriangleSquareCheck(other, option);
 		}
 
 		private static int signedTriangleSquare(Point a, Point b, Point c){
@@ -41,7 +41,7 @@ namespace Core {
 		private bool projectionIntersectionCheck(LineSegment other, IntersectionCheckOptions option){
 			bool call1 = projectionIntersection(Start.X, End.X, other.Start.X, other.End.X, option);
 			bool call2 = projectionIntersection(Start.Y, End.Y, other.Start.Y, other.End.Y, option);
-			return call1 && call2;
+			return call1 && call2;            
 		}
 	}
 }

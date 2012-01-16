@@ -61,8 +61,10 @@ namespace SuperProgram
         private void FormMain_Shown(object sender, EventArgs e)
         {
             pbDrawField.Image = new Bitmap(pbDrawField.Width, pbDrawField.Height);
-            Graphics gr = Graphics.FromImage(pbDrawField.Image);
-            gr.FillRectangle(Brushes.White, 0, 0, pbDrawField.Width, pbDrawField.Height);
+            //Ekaterina
+            _geometryDrawer.SetImageBuffer();
+            _geometryDrawer.FillBufferRectangle(Brushes.White, 0, 0, pbDrawField.Width, pbDrawField.Height);
+            //end Ekaterina
             pbDrawField.MouseClick += _pointsInputManager.PointsInputHandler;
         }
 
@@ -75,9 +77,11 @@ namespace SuperProgram
 
         private void btnClear_Click(object sender, EventArgs e)
         {
-            Graphics gr = Graphics.FromImage(pbDrawField.Image);
-            gr.FillRectangle(Brushes.White, 0, 0, pbDrawField.Width, pbDrawField.Height);
-            pbDrawField.Refresh();
+            //Ekaterina
+            //_geometryDrawer.SetImageBuffer();
+            _geometryDrawer.FillBufferRectangle(Brushes.White, 0, 0, pbDrawField.Width, pbDrawField.Height);
+            _geometryDrawer.RefreshImage();
+            //end Ekaterina
             _pointsInputManager.Reset();
             tabCtrlContours.TabPages.Clear();
             pbDrawField.MouseClick -= _pointsInputManager.PointsInputHandler;
@@ -90,11 +94,12 @@ namespace SuperProgram
 
         private void pbDrawField_Paint(object sender, PaintEventArgs e)
         {
-            if (_geometryDrawer.LastDrawnFrame != null)
+            //Ekaterina
+            if (!_geometryDrawer.IsBufferNull())
             {
-                Graphics gr = e.Graphics;
-                gr.DrawImage(_geometryDrawer.LastDrawnFrame, 0, 0);
+                _geometryDrawer.RefreshImage(e.Graphics);
             }
+            //end Ekaterina
         }
 
         private void btnGetSingleContour_Click(object sender, EventArgs e)
@@ -104,9 +109,12 @@ namespace SuperProgram
                 _singleContour = _pointsInputManager.GetSingleContour();
                 tabCtrlContours.TabPages.Clear();
                 _tabControlHelper.CreatePageForContour(_singleContour);
-                Graphics gr = Graphics.FromImage(pbDrawField.Image);
-                gr.FillRectangle(Brushes.White, 0, 0, pbDrawField.Width, pbDrawField.Height);
+                //Ekaterina
+                //_geometryDrawer.SetImageBuffer();
+                _geometryDrawer.FillBufferRectangle(Brushes.White, 0, 0, pbDrawField.Width, pbDrawField.Height);
+                //end Ekaterina
                 _geometryDrawer.DrawContours(Pens.Black, _singleContour);
+
                 //Evgeniya
                 ButtonController.Instance().CurrentState = ButtonState.MakeSinglePressed;
                 ButtonController.Instance().changeButtonState(btnClear, btnCompleteInput, btnGetSingleContour, btnNetReculc, btnTriangulate, btnRenumerator, btnSolve);
@@ -145,8 +153,10 @@ namespace SuperProgram
                     _singleContour.RecalculateWithStep(step);
                     tabCtrlContours.TabPages.Clear();
                     _tabControlHelper.CreatePageForContour(_singleContour);
-                    Graphics gr = Graphics.FromImage(pbDrawField.Image);
-                    gr.FillRectangle(Brushes.White, 0, 0, pbDrawField.Width, pbDrawField.Height);
+                    //Ekaterina
+                    //_geometryDrawer.SetImageBuffer();
+                    _geometryDrawer.FillBufferRectangle(Brushes.White, 0, 0, pbDrawField.Width, pbDrawField.Height);
+                    //end Ekaterina
                     _geometryDrawer.DrawContours(Pens.Black, _singleContour);
                     //Evgeniya
                     ButtonController.Instance().CurrentState = ButtonState.RenumerationPressed;
@@ -170,6 +180,8 @@ namespace SuperProgram
 
             Triangulator triangulator = new Triangulator();
             _triangleList = (triangulator.Triangulate(_singleContour)) as List<Triangle>;
+            tabCtrlContours.TabPages.Clear();
+            _tabControlHelper.CreatePageForContour(_singleContour);
             _geometryDrawer.DrawTriangles(Pens.Black, _triangleList.ToArray());
             //Evgeniya
             ButtonController.Instance().CurrentState = ButtonState.TriangulationPressed;
@@ -183,9 +195,10 @@ namespace SuperProgram
         {
             Renumerator.DoRenumeration(_triangleList);
             //just for visualization
-            Graphics gr = Graphics.FromImage(pbDrawField.Image);
-            gr.FillRectangle(Brushes.White, 0, 0, pbDrawField.Width, pbDrawField.Height);
-            pbDrawField.Refresh();
+            //Ekaterina
+           // _geometryDrawer.SetImageBuffer();
+            _geometryDrawer.FillBufferRectangle(Brushes.White, 0, 0, pbDrawField.Width, pbDrawField.Height);
+            //end Ekaterina
             _geometryDrawer.DrawTriangles(Pens.Black, _triangleList.ToArray());
             ButtonController.Instance().CurrentState = ButtonState.KathMaccPressed;
             ButtonController.Instance().changeButtonState(btnClear, btnCompleteInput, btnGetSingleContour, btnNetReculc, btnTriangulate, btnRenumerator, btnSolve);
@@ -198,6 +211,11 @@ namespace SuperProgram
             initSystem();
             SystemMaker.MakeSystem(ref _triangleList, ref _contourPoints, ref matrix_system, ref vector_system);
             solution = Cholesky.CholeskySolver.Solve(matrix_system, vector_system);
+
+            //Ekaterina
+            _geometryDrawer.FillTriangles(_triangleList, solution);
+            _geometryDrawer.DrawTriangles(Pens.Black, _triangleList.ToArray());
+            //end Ekaterina
 
             //Evgeniya
             ButtonController.Instance().CurrentState = ButtonState.SolvePressed;

@@ -43,6 +43,9 @@ namespace SuperProgram.CodeBehind {
 			if (currentContour.Head == null) {
 				currentContour.Add(newPoint);
 				_drawer.DrawPoints(Pens.Black, newPoint);
+                //Ekaterina
+                _drawer.RefreshImage();
+                //end Ekaterina
 				_lastPointIndex++;
 			} else{
 				if (currentContour.Tail == null){
