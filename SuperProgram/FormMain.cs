@@ -22,6 +22,8 @@ namespace SuperProgram
         private TabControlHelper _tabControlHelper;
         private Contour _singleContour;
 
+        private int minStep = 30;
+
         // Julia
         private List<Triangle> _triangleList;
         // end Julia
@@ -137,6 +139,12 @@ namespace SuperProgram
                 int step;
                 if (int.TryParse(textBox1.Text, out step))
                 {
+                    if (step < minStep)
+                    {
+                        MessageBox.Show("Вы ввели очень маленький шаг.\nШаг должен быть не меньше " + minStep);
+                        return;
+                    }
+
                     // Julia
                     int count = _singleContour.Count();
                     int min = (int)Triangulation.BPoint.dist(_singleContour[count - 1], _singleContour[0]);
@@ -146,6 +154,14 @@ namespace SuperProgram
                         if (cur < min)
                             min = cur;
                     }
+
+                    if (min < minStep)
+                    {
+                        MessageBox.Show("Входные данные приведут к низкой эффективности получаемого результата. Для достижения достаточной эффективности введите контур, наименьшая сторона которого будет не меньше " +
+                            minStep);
+                        return;
+                    }
+
                     if (min < step)
                         step = min;
                     // end Julia
