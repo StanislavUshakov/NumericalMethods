@@ -137,7 +137,7 @@ namespace SuperProgram.CodeBehind {
             {
                 Point[] trianglePoints = { triangle.I, triangle.J, triangle.K };
 
-                double fillT = (T[triangle.I.Index - 1] + T[triangle.I.Index - 1] + T[triangle.I.Index - 1]) / 3;
+                double fillT = (T[triangle.I.Index - 1] + T[triangle.J.Index - 1] + T[triangle.K.Index - 1]) / 3;
                 int TColor = fillT > 0 ? 255 - (int)(fillT / TStep) : 255;
                 SolidBrush brush = new SolidBrush(Color.FromArgb(255, TColor, TColor));
                 fillTriangle(brush, trianglePoints);

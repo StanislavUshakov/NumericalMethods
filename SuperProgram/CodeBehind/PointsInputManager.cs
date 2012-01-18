@@ -33,6 +33,28 @@ namespace SuperProgram.CodeBehind {
 			_lastPointIndex = 0;
 		}
 
+        public void SetUpTestCase()
+        {
+            Contour currentContour = new Contour(Contours.Count + 1);
+            Contours.Add(currentContour);
+            Point pt1 = new Point(0, 0);
+            pt1.T = 0;
+            currentContour.Add(pt1);
+            Point pt2 = new Point(100, 0);
+            pt2.T = 100;
+            currentContour.Add(pt2);
+            Point pt3 = new Point(0, 100);
+            pt3.T = 0;
+            currentContour.Add(pt3);
+            //Point pt4 = new Point(0, 100);
+            //pt4.T = 0;
+            //currentContour.Add(pt4);
+            //Point pt5 = new Point(0, 40);
+            //pt5.T = 1;
+            //currentContour.Add(pt5);
+            currentContour.Add(pt1);
+        }
+
 		public void PointsInputHandler(object sender, MouseEventArgs e){
 			Contour currentContour = Contours.FirstOrDefault(x => !x.IsCompleted);
 			if (currentContour == null){

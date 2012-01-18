@@ -38,7 +38,7 @@ namespace SuperProgram
                 K[0, 0] = ((triangle.J.Y - triangle.K.Y) * (triangle.J.Y - triangle.K.Y) +
                            (triangle.K.X - triangle.J.X) * (triangle.K.X - triangle.J.X)) / denominator_K;
 
-                K[1, 1] = ((triangle.K.Y - triangle.J.Y) * (triangle.K.Y - triangle.J.Y) +
+                K[1, 1] = ((triangle.K.Y - triangle.I.Y) * (triangle.K.Y - triangle.I.Y) +
                            (triangle.I.X - triangle.K.X) * (triangle.I.X - triangle.K.X)) / denominator_K;
 
                 K[2, 2] = ((triangle.I.Y - triangle.J.Y) * (triangle.I.Y - triangle.J.Y) +
@@ -73,8 +73,10 @@ namespace SuperProgram
                 {
                     if (contour.Contains(triangle.J)) //if IJ
                     {
-                        points_index_difference = triangle.I.Index - triangle.J.Index;
-                        if ((points_index_difference == 1) || (points_index_difference == -1))
+                        points_index_difference = contour.FindIndex( p => p.Index == triangle.I.Index)
+                            - contour.FindIndex( p => p.Index == triangle.J.Index);
+                        if ((points_index_difference == 1) || (points_index_difference == -1) 
+                            || (points_index_difference == contour.Count - 1))
                         {// if I and J are neighbors
                             koefficient_line_segment = triangle.IJ.Length / 3.0;
 
@@ -87,34 +89,19 @@ namespace SuperProgram
                             K[1, 0] += koefficient_line_segment;  // (length of IJ) / 6
 
                             koefficient_line_segment = (triangle.I.T + triangle.J.T) * triangle.IJ.Length / 4.0;
-
-                            F[0] += koefficient_line_segment;  // (average temperature on IJ) * (length of IJ) / 2
-                            F[1] += koefficient_line_segment;  // (average temperature on IJ) * (length of IJ) / 2
-                        }
-                        else if ( ((triangle.I.Index == 1) || (triangle.I.Index == last_point_index_in_contour)) &&
-                                  ((triangle.J.Index == 1) || (triangle.J.Index == last_point_index_in_contour))  )
-                        {//if I and J are the first and the last points in the contour (they are neighbors)
-                            koefficient_line_segment = triangle.IJ.Length / 3.0;
-
-                            K[0, 0] += koefficient_line_segment;  // (length of IJ) / 3
-                            K[1, 1] += koefficient_line_segment;  // (length of IJ) / 3
-
-                            koefficient_line_segment = triangle.IJ.Length / 6.0;
-
-                            K[0, 1] += koefficient_line_segment;  // (length of IJ) / 6
-                            K[1, 0] += koefficient_line_segment;  // (length of IJ) / 6
-
-                            koefficient_line_segment = (triangle.I.T + triangle.J.T) * triangle.IJ.Length / 4.0;
-
-                            F[0] += koefficient_line_segment;  // (average temperature on IJ) * (length of IJ) / 2
-                            F[1] += koefficient_line_segment;  // (average temperature on IJ) * (length of IJ) / 2
+                            double f0 = FindKoefF(triangle.I, triangle.I, triangle.J, triangle);
+                            double f1 = FindKoefF(triangle.J, triangle.I, triangle.J, triangle);
+                            F[0] += f0;  
+                            F[1] += f1;  
                         }
                     }
 
                     if (contour.Contains(triangle.K)) //if KI
                     {
-                        points_index_difference = triangle.I.Index - triangle.K.Index;
-                        if ((points_index_difference == 1) || (points_index_difference == -1))
+                        points_index_difference = contour.FindIndex(p => p.Index == triangle.I.Index)
+                            - contour.FindIndex(p => p.Index == triangle.K.Index);
+                        if ((points_index_difference == 1) || (points_index_difference == -1)
+                            || (points_index_difference == contour.Count - 1))
                         {// if I and K are neighbors
                             koefficient_line_segment = triangle.KI.Length / 3.0;
 
@@ -127,35 +114,20 @@ namespace SuperProgram
                             K[2, 0] += koefficient_line_segment;  //(length of KI) / 6
 
                             koefficient_line_segment = (triangle.I.T + triangle.K.T) * triangle.KI.Length / 4.0;
-
-                            F[0] += koefficient_line_segment;  // (average temperature on KI) * (length of KI) / 2
-                            F[2] += koefficient_line_segment;  // (average temperature on KI) * (length of KI) / 2
-                        }
-                        else if ( ((triangle.I.Index == 1) || (triangle.I.Index == last_point_index_in_contour)) &&
-                                  ((triangle.K.Index == 1) || (triangle.K.Index == last_point_index_in_contour))  )
-                        {//if I and K are the first and the last points in the contour (they are neighbors)
-                            koefficient_line_segment = triangle.KI.Length / 3.0;
-
-                            K[0, 0] += koefficient_line_segment;  //(length of KI) / 3
-                            K[2, 2] += koefficient_line_segment;  //(length of KI) / 3
-
-                            koefficient_line_segment = triangle.KI.Length / 6.0;
-
-                            K[0, 2] += koefficient_line_segment;  //(length of KI) / 6
-                            K[2, 0] += koefficient_line_segment;  //(length of KI) / 6
-
-                            koefficient_line_segment = (triangle.I.T + triangle.K.T) * triangle.KI.Length / 4.0;
-
-                            F[0] += koefficient_line_segment;  // (average temperature on KI) * (length of KI) / 2
-                            F[2] += koefficient_line_segment;  // (average temperature on KI) * (length of KI) / 2                        }
+                            double f0 = FindKoefF(triangle.I, triangle.K, triangle.I, triangle);
+                            double f2 = FindKoefF(triangle.K, triangle.K, triangle.I, triangle);
+                            F[0] += f0;  
+                            F[2] += f2;  
                         }
                     }
                 }
 
                 if (contour.Contains(triangle.J) && contour.Contains(triangle.K))  //if JK
                 {
-                    points_index_difference = triangle.K.Index - triangle.J.Index;
-                    if ((points_index_difference == 1) || (points_index_difference == -1))
+                    points_index_difference = contour.FindIndex(p => p.Index == triangle.K.Index)
+                            - contour.FindIndex(p => p.Index == triangle.J.Index);
+                    if ((points_index_difference == 1) || (points_index_difference == -1)
+                        || (points_index_difference == contour.Count - 1))                    
                     {// if K and J are neighbors
                         koefficient_line_segment = triangle.JK.Length / 3.0;
 
@@ -168,27 +140,10 @@ namespace SuperProgram
                         K[2, 1] += koefficient_line_segment;  //(length of JK) / 6
 
                         koefficient_line_segment = (triangle.J.T + triangle.K.T) * triangle.JK.Length / 4.0;
-
-                        F[1] += koefficient_line_segment;  // (average temperature on JK) * (length of JK) / 2
-                        F[2] += koefficient_line_segment;  // (average temperature on JK) * (length of JK) / 2
-                    }
-                    else if ( ((triangle.J.Index == 1) || (triangle.J.Index == last_point_index_in_contour)) &&
-                              ((triangle.K.Index == 1) || (triangle.K.Index == last_point_index_in_contour))  )
-                    {//if J and K are the first and the last points in the contour (they are neighbors)
-                        koefficient_line_segment = triangle.JK.Length / 3.0;
-
-                        K[1, 1] += koefficient_line_segment;  //(length of JK) / 3
-                        K[2, 2] += koefficient_line_segment;  //(length of JK) / 3
-
-                        koefficient_line_segment = triangle.JK.Length / 6.0;
-
-                        K[1, 2] += koefficient_line_segment;  //(length of JK) / 6
-                        K[2, 1] += koefficient_line_segment;  //(length of JK) / 6
-
-                        koefficient_line_segment = (triangle.J.T + triangle.K.T) * triangle.JK.Length / 4.0;
-
-                        F[1] += koefficient_line_segment;  // (average temperature on JK) * (length of JK) / 2
-                        F[2] += koefficient_line_segment;  // (average temperature on JK) * (length of JK) / 2
+                        double f1 = FindKoefF(triangle.J, triangle.J, triangle.K, triangle);
+                        double f2 = FindKoefF(triangle.K, triangle.J, triangle.K, triangle);
+                        F[1] += f1;  
+                        F[2] += f2;  
                     }
                 }
 
@@ -218,10 +173,50 @@ namespace SuperProgram
                 vector[triangle.K.Index - 1] += F[2];  //F[k]
 
                 //---------------------------------------------------------------------------------------------------
-
-
+                
             }//end of foreach
+        }
 
+        static private void FindABC(Point j, Point k, ref double a, ref double b, ref double c)
+        {
+            a = j.X * k.Y - k.X * j.Y;
+            b = j.Y - k.Y;
+            c = -j.X + k.X;
+        }
+
+        static private double FindKoefF(Point inPoint, Point i, Point j, Triangle triangle)
+        {
+            double deltaX = j.X - i.X;
+            double deltaY = j.Y - i.Y;
+            double deltaT = j.T - i.T;
+            double a = 0, b = 0, c = 0;
+            double length = Math.Sqrt( (i.X - j.X) * (i.X - j.X) + (i.Y - j.Y) * (i.Y - j.Y) );
+            
+            Point jToFindL, kToFindL;
+            if (inPoint.Index == triangle.I.Index)
+            {
+                jToFindL = triangle.J;
+                kToFindL = triangle.K;
+            }
+            else if (inPoint.Index == triangle.J.Index)
+            {
+                jToFindL = triangle.K;
+                kToFindL = triangle.I;
+            }
+            else
+            {
+                jToFindL = triangle.I;
+                kToFindL = triangle.J;
+            }
+
+            FindABC(jToFindL, kToFindL, ref a, ref b, ref c);
+
+            double Ni = a + b * i.X + c * i.Y;
+            double koeftBeforeT = b * deltaX + c * deltaY;
+
+            double res = length / (2.0 * triangle.Square()) *
+                ( Ni * i.T + (i.T * koeftBeforeT + Ni * deltaT) / 2.0 + (deltaT * koeftBeforeT / 3.0) );
+            return res;
         }
     }
 }

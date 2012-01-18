@@ -108,6 +108,7 @@ namespace SuperProgram
         {
             try
             {
+                //_pointsInputManager.SetUpTestCase();
                 _singleContour = _pointsInputManager.GetSingleContour();
                 tabCtrlContours.TabPages.Clear();
                 _tabControlHelper.CreatePageForContour(_singleContour);
@@ -158,7 +159,7 @@ namespace SuperProgram
                     if (min < minStep)
                     {
                         MessageBox.Show("Входные данные приведут к низкой эффективности получаемого результата. Для достижения достаточной эффективности введите контур, наименьшая сторона которого будет не меньше " +
-                            minStep);
+                           minStep);
                         return;
                     }
 
@@ -232,6 +233,13 @@ namespace SuperProgram
             _geometryDrawer.FillTriangles(_triangleList, solution);
             _geometryDrawer.DrawTriangles(Pens.Black, _triangleList.ToArray());
             //end Ekaterina
+
+            for (int i = 0; i < solution.Length; ++i)
+            {
+                _singleContour.Where(x => x.Index == i+1).First().T = solution[i];
+            }
+            tabCtrlContours.TabPages.Clear();
+            _tabControlHelper.CreatePageForContour(_singleContour);
 
             //Evgeniya
             ButtonController.Instance().CurrentState = ButtonState.SolvePressed;

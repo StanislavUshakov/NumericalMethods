@@ -71,7 +71,7 @@ namespace Triangulation
                 // work with the i node
                 double ang = boundList[i].angle;
                 if ((ang < Math.PI * 5 / 12) ||
-                    ((ang < Math.PI / 2) && (boundList[i].jAngle > Math.PI / 6) && (boundList[i].kAngle > Math.PI / 6)))
+                    ((ang < Math.PI / 2 - 0.001) && (boundList[i].jAngle > Math.PI / 6) && (boundList[i].kAngle > Math.PI / 6)))
                 {
                     // cut
                     BPoint it = boundList[i];
