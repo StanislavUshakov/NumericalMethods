@@ -164,7 +164,7 @@ namespace SuperProgram
                     }
 
                     if (min < step)
-                        step = min;
+                        step = min + 1;
                     // end Julia
 
                     _singleContour.RecalculateWithStep(step);
